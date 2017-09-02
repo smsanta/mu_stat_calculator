@@ -38,26 +38,51 @@ class Application {
         }
     }
 
-    static void ElfTests() {
-        def charConfig = Class.forName("mu.characters.config.version.${characterVersion}.CharacterConfig").newInstance()
-        ELF character = ELF.newInstance( charConfig.CHARACTERS_VALUATIONS.ELF.INITIAL_STATS )
-        println( character.toString() )
+    /* FULL TEST OUTPUT
+         BK Level: 400, Stats: [str:571, agi:563, vit:568, ene:553] - Points to spend: 2175, already spent: 2172.
+        Defense 187, Defense Success Rate: PVP: 1081 PVM: 187
+        Attack Speed: 28
+        Maic Damage: [min:79, max:184]
+        Physical Damage: [min:95, max:285] - Attack Success Rate: PVP: 3733 PVM: 2987
+        Damage Multiplier: 55
 
-        character.addStat( CharacterData.CHARACTER_LEVEL, 16 )
-        character.addStat( CharacterData.CHARACTER_STAT_AGI, 75 )
-        println( character.toString() )
+        SM Level: 400, Stats: [str:561, agi:561, vit:558, ene:573] - Points to spend: 2175, already spent: 2172.
+        Defense 140, Defense Success Rate: PVP: 940 PVM: 187
+        Attack Speed: 56
+        Maic Damage: [min:95, max:191]
+        Physical Damage: [min:93, max:140] - Attack Success Rate: PVP: 3444 PVM: 2981
 
-    }
+        ELF Level: 400, Stats: [str:565, agi:568, vit:563, ene:558] - Points to spend: 2175, already spent: 2172.
+        Defense 81, Defense Success Rate: PVP: 856 PVM: 142
+        Attack Speed: 11
+        Maic Damage: [min:62, max:111]
+        Physical Damage: [min:188, max:188] - Attack Success Rate: PVP: 1540 PVM: 2993
+        Bow Damage: [min:62, max:111]
 
-    static def BkTests() {
-        def charConfig = Class.forName("mu.characters.config.version.${characterVersion}.CharacterConfig").newInstance()
+        MG Level: 400, Stats: [str:724, agi:724, vit:724, ene:724] - Points to spend: 2793, already spent: 2792.
+        Defense 181, Defense Success Rate: PVP: 981 PVM: 241
+        Attack Speed: 36
+        Maic Damage: [min:144, max:362]
+        Physical Damage: [min:225, max:482] - Attack Success Rate: PVP: 4096 PVM: 3267
 
-        [1,2,3,100,220,221,300,400].each { it ->
-            BK character = BK.newInstance( charConfig.CHARACTERS_VALUATIONS.BK.INITIAL_STATS )
-            character.level = it
-            character.autoSpendPoints(50, 30, 10, 10)
+        DL Level: 400, Stats: [str:584, agi:578, vit:578, ene:573, com:583] - Points to spend: 2793, already spent: 2207.
+        Defense 96, Defense Success Rate: PVP: 944 PVM: 82
+        Attack Speed: 28
+        Maic Damage: [min:71, max:191]
+        Physical Damage: [min:154, max:217] - Attack Success Rate: PVP: 3512 PVM: 3938
+        Damage Multiplier: 28
 
-            println( character )
-        }
-    }
+        SU Level: 400, Stats: [str:564, agi:564, vit:561, ene:566] - Points to spend: 2175, already spent: 2172.
+        Defense 188, Defense Success Rate: PVP: 1082 PVM: 141
+        Attack Speed: 31
+        Maic Damage: [min:113, max:188]
+        Physical Damage: [min:141, max:141] - Attack Success Rate: PVP: 3174 PVM: 2987
+
+        RF Level: 400, Stats: [str:568, agi:570, vit:575, ene:563] - Points to spend: 2175, already spent: 2172.
+        Defense 71, Defense Success Rate: PVP: 714 PVM: 57
+        Attack Speed: 22
+        Maic Damage: [min:80, max:187]
+        Physical Damage: [min:135, max:246] - Attack Success Rate: PVP: 3092 PVM: 2007
+        Damage Multiplier: DS: 71 MELEE: 57 ROAR: 57
+     */
 }
