@@ -1,5 +1,7 @@
 package mu.characters.config.version.beta_first
 
+import mu.characters.BK
+import mu.characters.Character
 import mu.characters.CharacterData
 
 /**
@@ -8,6 +10,46 @@ import mu.characters.CharacterData
  *
  */
 class CharacterConfig {
+
+    /**
+     * Generic formula calculation
+     */
+    static COMMON_CHARACTER_FORMULA = [
+        DAMAGE_MULTIPLIER: [
+            FORMULA : { Character character, wildcard = [:] ->
+                if( character.hasDamageMultiplier() ){
+                    def multiplierType = wildcard?.multiplierType ?: []
+                    def calculatedMultiplier = character.ene / character.getDamageMultiplierValuation( multiplierType ).MULTIPLIER
+                    ( (calculatedMultiplier >= CharacterData.CHARACTER_MAX_DAMAGE_MULTIPLIER) ? CharacterData.CHARACTER_MAX_DAMAGE_MULTIPLIER : calculatedMultiplier)
+                } else {
+                    CharacterData.CHARACTER_DEFAULT_DAMAGE_MULTIPLIER
+                }
+            }
+        ],
+        DEFENSE : [
+            FORMULA : { Character character ->
+                character.agi / character.getDefenseValuation().MULTIPLIER
+            }
+        ],
+        DEFENSE_SUCCESS_RATE : [
+            (CharacterData.FIGHT_TYPE_PVM) : [
+                FORMULA : { Character character ->
+                    character.agi / character.getDefenseSuccessRateValuation( CharacterData.FIGHT_TYPE_PVM ).MULTIPLIER
+                }
+            ],
+            (CharacterData.FIGHT_TYPE_PVP) : [
+                FORMULA : { Character character ->
+                    def configDSR = character.getDefenseSuccessRateValuation( CharacterData.FIGHT_TYPE_PVP )
+                    ((character.level * configDSR.LEVEL_MULTIPLIER ) / configDSR.LEVEL_MULTIPLIER_CONTROL) + (character.agi / configDSR.MULTIPLIER)
+                }
+            ]
+        ],
+        SPEED : [
+            FORMULA : { Character character ->
+                character.agi / character.getSpeedValuation().MULTIPLIER
+            }
+        ]
+    ]
 
     static CHARACTERS_VALUATIONS =[
         (CharacterData.CHARACTER_ID_BK) : [
@@ -30,29 +72,70 @@ class CharacterConfig {
                 (CharacterData.CHARACTER_STAT_ENE) : 10
             ],
             DAMAGE_MULTIPLIER : [
-                MULTIPLIER : 10,
-                APPLIES_ON : CharacterData.CHARACTER_STAT_ENE
+                FORMULA : COMMON_CHARACTER_FORMULA.DAMAGE_MULTIPLIER.FORMULA,
+                MULTIPLIER : 10
             ],
             DEFENSE : [
-                MULTIPLIER : 3,
-                APPLIES_ON : CharacterData.CHARACTER_STAT_AGI
+                FORMULA : COMMON_CHARACTER_FORMULA.DEFENSE.FORMULA,
+                MULTIPLIER : 3
             ],
             DEFENSE_SUCCESS_RATE : [
                 (CharacterData.FIGHT_TYPE_PVM) : [
-                    MULTIPLIER : 3,
-                    APPLIES_ON : CharacterData.CHARACTER_STAT_AGI
+                    FORMULA : COMMON_CHARACTER_FORMULA.DEFENSE_SUCCESS_RATE."${CharacterData.FIGHT_TYPE_PVM}".FORMULA,
+                    MULTIPLIER : 3
                 ],
                 (CharacterData.FIGHT_TYPE_PVP) : [
+                    FORMULA : COMMON_CHARACTER_FORMULA.DEFENSE_SUCCESS_RATE."${CharacterData.FIGHT_TYPE_PVP}".FORMULA,
                     LEVEL_MULTIPLIER : 2,
                     LEVEL_MULTIPLIER_CONTROL : 1,
-                    MULTIPLIER : 2,
-                    APPLIES_ON : CharacterData.CHARACTER_STAT_AGI
+                    MULTIPLIER : 2
                 ]
             ],
             SPEED : [
-                MULTIPLIER : 20,
-                APPLIES_ON : CharacterData.CHARACTER_STAT_AGI,
-                BASE : 30
+                FORMULA : COMMON_CHARACTER_FORMULA.SPEED.FORMULA,
+                MULTIPLIER : 20
+            ],
+            DAMAGE : [
+                (CharacterData.CHARACTER_DAMAGE_TYPE_PHYSICAL) : [
+                    FORMULA : { Character character ->
+                        [
+                            min : character.getDamageValuation( CharacterData.CHARACTER_DAMAGE_TYPE_PHYSICAL ).MIN_DAMAGE.FORMULA(character) as Integer,
+                            max : character.getDamageValuation( CharacterData.CHARACTER_DAMAGE_TYPE_PHYSICAL ).MAX_DAMAGE.FORMULA(character) as Integer
+                        ]
+                    },
+                    MIN_DAMAGE : [
+                        FORMULA : { Character character ->
+                            character.str / character.getDamageValuation( CharacterData.CHARACTER_DAMAGE_TYPE_PHYSICAL ).MIN_DAMAGE.MULTIPLIER
+                        },
+                        MULTIPLIER : 6
+                    ],
+                    MAX_DAMAGE : [
+                        FORMULA : { Character character ->
+                            character.str / character.getDamageValuation( CharacterData.CHARACTER_DAMAGE_TYPE_PHYSICAL ).MAX_DAMAGE.MULTIPLIER
+                        },
+                        MULTIPLIER : 2
+                    ]
+                ],
+                (CharacterData.CHARACTER_DAMAGE_TYPE_MAGIC) : [
+                    FORMULA : { Character character ->
+                        [
+                            min : character.getDamageValuation( CharacterData.CHARACTER_DAMAGE_TYPE_MAGIC ).MIN_DAMAGE.FORMULA(character) as Integer,
+                            max : character.getDamageValuation( CharacterData.CHARACTER_DAMAGE_TYPE_MAGIC ).MAX_DAMAGE.FORMULA(character) as Integer
+                        ]
+                    },
+                    MIN_DAMAGE : [
+                        FORMULA : { Character character ->
+                            character.ene / character.getDamageValuation( CharacterData.CHARACTER_DAMAGE_TYPE_MAGIC ).MIN_DAMAGE.MULTIPLIER
+                        },
+                        MULTIPLIER : 7
+                    ],
+                    MAX_DAMAGE : [
+                        FORMULA : { Character character ->
+                            character.ene / character.getDamageValuation( CharacterData.CHARACTER_DAMAGE_TYPE_MAGIC ).MAX_DAMAGE.MULTIPLIER
+                        },
+                        MULTIPLIER : 3
+                    ]
+                ]
             ]
         ],
         (CharacterData.CHARACTER_ID_ELF) : [
@@ -105,10 +188,10 @@ class CharacterConfig {
                 ],
                 (CharacterData.CHARACTER_DAMAGE_TYPE_MAGIC) : [
                         MIN_DAMAGE : [
-                                MULTIPLIER : 8,
+                            MULTIPLIER : 8,
                         ],
                         MAX_DAMAGE : [
-                                MULTIPLIER : 4,
+                            MULTIPLIER : 4,
                         ]
                 ],
                 (CharacterData.CHARACTER_DAMAGE_TYPE_BOW) : [

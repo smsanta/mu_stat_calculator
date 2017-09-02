@@ -4,9 +4,6 @@ import mu.characters.config.version.beta_first.CharacterConfig
 
 abstract class Character {
 
-    //Specific character values
-    static final Integer MAX_DAMAGE_MULTIPLIER = 500
-
     Integer level = 1
 
     Integer str
@@ -24,18 +21,11 @@ abstract class Character {
     abstract boolean hasDamageMultiplier()
 
     Integer calculateDamageMultiplier(){
-        if( hasDamageMultiplier() ){
-            def dmgMultiplierConfig = getDamageMultiplierValuation()
-            def multiplier = this."${dmgMultiplierConfig.APPLIES_ON}" / dmgMultiplierConfig.MULTIPLIER
-            multiplier < MAX_DAMAGE_MULTIPLIER ? multiplier : MAX_DAMAGE_MULTIPLIER
-        }else{
-            200
-        }
+        getDamageMultiplierValuation().FORMULA( this )
     }
 
     Integer calculateDefense(){
-        def charDefence = getDefenseValuation()
-        this."${charDefence.APPLIES_ON}" / charDefence.MULTIPLIER
+        getDefenseValuation().FORMULA(this)
     }
 
     /**
@@ -44,23 +34,15 @@ abstract class Character {
      * @return
      */
     Integer calculateDefenseSucessRate( fightType = CharacterData.FIGHT_TYPE_PVP ){
-        def configDSR = getDefenseSuccessRateValuation( fightType )
-
-        if( fightType == CharacterData.FIGHT_TYPE_PVP ){
-            ((level * configDSR.LEVEL_MULTIPLIER ) / configDSR.LEVEL_MULTIPLIER_CONTROL) + (this."${configDSR.APPLIES_ON}" / configDSR.MULTIPLIER)
-        } else {
-            this."${configDSR.APPLIES_ON}" / configDSR.MULTIPLIER
-        }
+        getDefenseSuccessRateValuation( fightType ).FORMULA( this )
     }
 
     Integer calculateSpeed(){
-        def speedValuation = getSpeedValuation()
-        this."${speedValuation.APPLIES_ON}" / speedValuation.MULTIPLIER
+        getSpeedValuation().FORMULA(this)
     }
 
     def calculateDamage( damageType ) {
-        def damageConfig = getDamageValuation( damageType )
-        this."calculate${damageType.toLowerCase().capitalize()}Damage"( damageConfig )
+        getDamageValuation( damageType ).FORMULA(this)
     }
 
     /** CONFIG OBAINING **/
@@ -82,7 +64,6 @@ abstract class Character {
             }else{
                 getCharacterConfig().DAMAGE_MULTIPLIER
             }
-
         }
     }
 
@@ -221,7 +202,7 @@ abstract class Character {
                 "Attack Speed: ${calculateSpeed()}\n" +
                 "Maic Damage: ${calculateDamage( CharacterData.CHARACTER_DAMAGE_TYPE_MAGIC )}\n" +
                 "Physical Damage: ${calculateDamage( CharacterData.CHARACTER_DAMAGE_TYPE_PHYSICAL )} - Damage Success Rate: -1\n" +
-                (hasDamageMultiplier() ? "Damage Multiplier: ${calculateDamageMultiplier()}" : "")
+                (hasDamageMultiplier() ? "Damage Multiplier: ${calculateDamageMultiplier()}\n" : "")
     }
 
 }

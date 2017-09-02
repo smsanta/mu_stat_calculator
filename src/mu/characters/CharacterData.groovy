@@ -18,6 +18,10 @@ abstract class CharacterData {
     static CHARACTER_STAT_ENE = "ene"
     static CHARACTER_STAT_COM = "com"
 
+    //Specific character values
+    static Integer CHARACTER_MAX_DAMAGE_MULTIPLIER = 500
+    static Integer CHARACTER_DEFAULT_DAMAGE_MULTIPLIER = 200
+
     //Damage multiplier apllication types
     static CHARACTER_DAMAGE_MULTIPLIER_TYPE_UNIQUE = "UNIQUE"
     static CHARACTER_DAMAGE_MULTIPLIER_TYPE_DS = "DS"

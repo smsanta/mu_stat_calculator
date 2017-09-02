@@ -47,24 +47,15 @@ class Application {
     static def BkTests() {
         def charConfig = Class.forName("mu.characters.config.version.${characterVersion}.CharacterConfig").newInstance()
 
-        BK character = BK.newInstance( charConfig.CHARACTERS_VALUATIONS.BK.INITIAL_STATS )
+
 
         [1,2,3,100,220,221,300,400].each { it ->
+            BK character = BK.newInstance( charConfig.CHARACTERS_VALUATIONS.BK.INITIAL_STATS )
             character.level = it
+            character.autoSpendPoints(50, 30, 10, 10)
 
-            println( "Your are level: ${character.level} and must have ${character.calculatePointsForCurrentLevel()} points for distribute. " +
-                    "Spent points so far: ${character.calculateSpentPoints()} " +
-                    "Defence: ${character.calculateDefense()}")
+            println( character )
         }
-
-        println("Attribute check: ${character.checkAttributes()}" )
-
-        println( character.getCharacterConfig() )
-        println( character.getDamageMultiplierValuation() )
-        println( character.getDefenseValuation() )
-        println( character.getDefenseSuccessRateValuation() )
-        println( character.getSpeedValuation() )
-        println( character.calculateDamageMultiplier() )
 
         //OUTPUT
         /*
