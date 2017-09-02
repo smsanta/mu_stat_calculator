@@ -1,6 +1,7 @@
 package mu.characters
 
 import mu.characters.config.version.beta_first.CharacterConfig
+import mu.characters.data.CharacterData
 
 abstract class Character {
 
@@ -20,8 +21,8 @@ abstract class Character {
 
     abstract boolean hasDamageMultiplier()
 
-    Integer calculateDamageMultiplier(){
-        getDamageMultiplierValuation().FORMULA( this )
+    Integer calculateDamageMultiplier( multiplierType = [] ){
+        getDamageMultiplierValuation( multiplierType ).FORMULA( this )
     }
 
     Integer calculateDefense(){
@@ -45,6 +46,10 @@ abstract class Character {
         getDamageValuation( damageType ).FORMULA(this)
     }
 
+    def calculateAttackSuccessRate( fightType = CharacterData.FIGHT_TYPE_PVP ) {
+        getAttackSuccessRateValuation( fightType ).FORMULA(this)
+    }
+
     /** CONFIG OBAINING **/
     def getCharacterConfig(){
         CharacterConfig.CHARACTERS_VALUATIONS."${ getCharId() }"
@@ -54,13 +59,10 @@ abstract class Character {
         getCharacterConfig().DAMAGE."${damageType}"
     }
 
-    def getDamageMultiplierValuation(def digIn = []){
+    def getDamageMultiplierValuation( damageType = null ){
         if( hasDamageMultiplier() ){
-            if(digIn){
-                def damageMultiplierValuation = getCharacterConfig().DAMAGE_MULTIPLIER
-                digIn.each{
-                    damageMultiplierValuation = damageMultiplierValuation."${it}"
-                }
+            if(damageType){
+                getCharacterConfig().DAMAGE_MULTIPLIER."${damageType}"
             }else{
                 getCharacterConfig().DAMAGE_MULTIPLIER
             }
@@ -85,6 +87,10 @@ abstract class Character {
 
     def getSpeedValuation(){
         getCharacterConfig().SPEED
+    }
+
+    def getAttackSuccessRateValuation( type ){
+        getCharacterConfig().ATTACK_SUCCESS_RATE."$type"
     }
 
     /** END CONFIG OBAINING **/
@@ -197,12 +203,13 @@ abstract class Character {
 
     @Override
     String toString() {
-        "${getCharId()} lvl: ${level}, Stats: ${getStats()} - Points to spend: ${calculatePointsForCurrentLevel()}, already spent: ${calculateSpentPoints()}. \n" +
-                "Defense ${calculateDefense()}, Defense Success Rate: PVP: ${calculateDefenseSucessRate()} PVM: ${calculateDefenseSucessRate(CharacterData.FIGHT_TYPE_PVM)}\n" +
-                "Attack Speed: ${calculateSpeed()}\n" +
-                "Maic Damage: ${calculateDamage( CharacterData.CHARACTER_DAMAGE_TYPE_MAGIC )}\n" +
-                "Physical Damage: ${calculateDamage( CharacterData.CHARACTER_DAMAGE_TYPE_PHYSICAL )} - Damage Success Rate: -1\n" +
-                (hasDamageMultiplier() ? "Damage Multiplier: ${calculateDamageMultiplier()}\n" : "")
+        "${getCharId()} Level: ${level}, Stats: ${getStats()} - Points to spend: ${calculatePointsForCurrentLevel()}, already spent: ${calculateSpentPoints()}. \n" +
+            "Defense ${calculateDefense()}, Defense Success Rate: PVP: ${calculateDefenseSucessRate()} PVM: ${calculateDefenseSucessRate(CharacterData.FIGHT_TYPE_PVM)}\n" +
+            "Attack Speed: ${calculateSpeed()}\n" +
+            "Maic Damage: ${calculateDamage( CharacterData.CHARACTER_DAMAGE_TYPE_MAGIC )}\n" +
+            "Physical Damage: ${calculateDamage( CharacterData.CHARACTER_DAMAGE_TYPE_PHYSICAL )} - " +
+            "Attack Success Rate: PVP: ${calculateAttackSuccessRate( CharacterData.FIGHT_TYPE_PVP )} PVM: ${calculateAttackSuccessRate( CharacterData.FIGHT_TYPE_PVM )}\n" +
+            (hasDamageMultiplier() ? "Damage Multiplier: ${calculateDamageMultiplier()}\n" : "")
     }
 
 }

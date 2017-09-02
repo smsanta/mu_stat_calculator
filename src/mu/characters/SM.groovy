@@ -1,7 +1,16 @@
 package mu.characters
 
-/**
- * Created by IGNACIO-PCX on 1/9/2017.
- */
-class SM {
+import mu.characters.data.CharacterData
+
+class SM extends Character {
+
+    @Override
+    String getCharId() {
+        CharacterData.CHARACTER_ID_SM
+    }
+
+    @Override
+    boolean hasDamageMultiplier() {
+        return false
+    }
 }

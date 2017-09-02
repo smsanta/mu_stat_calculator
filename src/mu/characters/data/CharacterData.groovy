@@ -1,4 +1,4 @@
-package mu.characters
+package mu.characters.data
 
 abstract class CharacterData {
     //Characters ID
