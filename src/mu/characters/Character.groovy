@@ -201,6 +201,17 @@ abstract class Character {
         this."${statType}" += value
     }
 
+    /**
+     * Set fixed Stats to the character
+     *
+     * @param statType
+     * @param value
+     * @return
+     */
+    def setStat(statType, value){
+        this."${statType}" = value
+    }
+
     @Override
     String toString() {
         "${getCharId()} Level: ${level}, Stats: ${getStats()} - Points to spend: ${calculatePointsForCurrentLevel()}, already spent: ${calculateSpentPoints()}. \n" +

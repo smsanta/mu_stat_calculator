@@ -1,7 +1,5 @@
 package mu.characters
 
-import mu.characters.data.CharacterData
-
 class DL extends Character{
 
     Integer com
@@ -16,7 +14,6 @@ class DL extends Character{
         return true
     }
 
-    @Override
     void autoSpendPoints(str = 0, agi = 0, vit = 0, ene = 0, com = 0){
         super.autoSpendPoints(str, agi, vit, ene)
         def pointsToSpend = calculatePointsForCurrentLevel()

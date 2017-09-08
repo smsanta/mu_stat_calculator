@@ -3,7 +3,6 @@ package mu.characters.config.version.beta_first
 import mu.characters.Character
 import mu.characters.DL
 import mu.characters.data.CharacterData
-import org.omg.PortableInterceptor.INACTIVE
 
 /**
  * Configuration values for each character.

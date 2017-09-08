@@ -36,4 +36,16 @@ abstract class CharacterData {
     //Figtht type
     static FIGHT_TYPE_PVM = "PVM"
     static FIGHT_TYPE_PVP = "PVP"
+
+    static def getCharacterIdList(){
+        [
+            CHARACTER_ID_BK,
+            CHARACTER_ID_SM,
+            CHARACTER_ID_ELF,
+            CHARACTER_ID_MG,
+            CHARACTER_ID_DL,
+            CHARACTER_ID_SU,
+            CHARACTER_ID_RF
+        ]
+    }
 }

@@ -1,6 +1,7 @@
 package mu.characters
 
 import mu.characters.data.CharacterData
+import mu.characters.Character
 
 class BK extends Character {
 
