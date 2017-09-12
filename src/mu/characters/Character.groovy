@@ -5,6 +5,8 @@ import mu.characters.data.CharacterData
 
 abstract class Character {
 
+    Integer id
+
     Integer level = 1
 
     Integer str
@@ -96,6 +98,11 @@ abstract class Character {
     /** END CONFIG OBAINING **/
 
     /** Utility Calculations **/
+    def calculateRemainingUnspentPoints(){
+        def remainingPoints = calculatePointsForCurrentLevel() - calculateSpentPoints()
+        remainingPoints
+    }
+
     def calculateSpentPoints(){
         def baseStats = getInitialStats().values().sum()
         def currentStatsAcumulation = str + agi + vit + ene
@@ -195,10 +202,18 @@ abstract class Character {
      *
      * @param statType
      * @param value
+     * @param fixed - If fixed will add the exact amount, otherwise will be added as a percentage of total points
+     *              for the current char level.
      * @return
      */
-    def addStat(statType, value){
-        this."${statType}" += value
+    def addStat(statType, value, fixed = true){
+        Integer valToAdd = value
+        if(!fixed){
+            def pointsToSpend = calculatePointsForCurrentLevel()
+            valToAdd = value * pointsToSpend / 100
+        }
+
+        this."${statType}" += valToAdd
     }
 
     /**
@@ -208,13 +223,46 @@ abstract class Character {
      * @param value
      * @return
      */
-    def setStat(statType, value){
-        this."${statType}" = value
+    def setStat(statType, value, fixed = true){
+        Integer valToAdd = value
+        if(!fixed){
+            def pointsToSpend = calculatePointsForCurrentLevel()
+            valToAdd = value * pointsToSpend / 100
+        }
+
+        this."${statType}" = valToAdd
+    }
+
+    /**
+     * Rollbacks character stats to it initial form.
+     */
+    void resetStats() {
+        def initialStats = getInitialStats()
+        str = initialStats.str
+        agi = initialStats.agi
+        ene = initialStats.ene
+        vit = initialStats.vit
+    }
+
+    /**
+     * Creates a new character from a specific version
+     *
+     * @param charId
+     * @param version
+     */
+    static def newFromVersion(charId, level, version){
+        def charConfig = Class.forName("mu.characters.config.version.${version}.CharacterConfig").newInstance()
+        def charClass = Class.forName("mu.characters.${charId}")
+        Character character = charClass.newInstance( charConfig.CHARACTERS_VALUATIONS."${charId}".INITIAL_STATS )
+        character.level = level
+        character
     }
 
     @Override
     String toString() {
-        "${getCharId()} Level: ${level}, Stats: ${getStats()} - Points to spend: ${calculatePointsForCurrentLevel()}, already spent: ${calculateSpentPoints()}. \n" +
+        " Character inicial statistics ${getInitialStats()}\n" +
+            "${(id >= 0 ? "ID: $id\n" : "") }${getCharId()} Level: ${level}, Stats: ${getStats()} - Total Points to spend: ${calculatePointsForCurrentLevel()}, " +
+            "already spent: ${calculateSpentPoints()}, Remainig: ${calculateRemainingUnspentPoints()}. \n" +
             "Defense ${calculateDefense()}, Defense Success Rate: PVP: ${calculateDefenseSucessRate()} PVM: ${calculateDefenseSucessRate(CharacterData.FIGHT_TYPE_PVM)}\n" +
             "Attack Speed: ${calculateSpeed()}\n" +
             "Maic Damage: ${calculateDamage( CharacterData.CHARACTER_DAMAGE_TYPE_MAGIC )}\n" +
@@ -222,5 +270,4 @@ abstract class Character {
             "Attack Success Rate: PVP: ${calculateAttackSuccessRate( CharacterData.FIGHT_TYPE_PVP )} PVM: ${calculateAttackSuccessRate( CharacterData.FIGHT_TYPE_PVM )}\n" +
             (hasDamageMultiplier() ? "Damage Multiplier: ${calculateDamageMultiplier()}\n" : "")
     }
-
 }

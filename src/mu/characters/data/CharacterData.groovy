@@ -1,6 +1,9 @@
 package mu.characters.data
 
 abstract class CharacterData {
+    //Versions
+    static def CHARACTER_VERSION_DEFAULT = "beta_first"
+
     //Characters ID
     static CHARACTER_ID_BK = "BK"   //Dragon Knight
     static CHARACTER_ID_ELF = "ELF" //Elf
@@ -11,6 +14,8 @@ abstract class CharacterData {
     static CHARACTER_ID_SU = "SU"   //Summoner
 
     //Stats character mapping
+    static CHARACTER_ID_TYPE = "character"
+    static CHARACTER_ID = "id"
     static CHARACTER_LEVEL = "level"
     static CHARACTER_STAT_STR = "str"
     static CHARACTER_STAT_AGI = "agi"
@@ -46,6 +51,16 @@ abstract class CharacterData {
             CHARACTER_ID_DL,
             CHARACTER_ID_SU,
             CHARACTER_ID_RF
+        ]
+    }
+
+    static def getCharacterStatsList(){
+        [
+            CHARACTER_STAT_STR,
+            CHARACTER_STAT_AGI,
+            CHARACTER_STAT_VIT,
+            CHARACTER_STAT_ENE,
+            CHARACTER_STAT_COM
         ]
     }
 }
