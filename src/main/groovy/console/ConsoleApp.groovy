@@ -225,6 +225,14 @@ class ConsoleApp {
             ],
             description : "Rollbacks a character statistics to default."
         ],
+        quit : [
+            event : { args, commandData ->
+                //Dummy event
+            },
+            args : [:],
+            description : "Ends the application."
+        ]
+
     ]
 
     /**
@@ -403,17 +411,18 @@ class ConsoleApp {
                 if(!firstInput){
                     inputCommand = ConsoleApp.parseCommand( input )
 
-                    if( ConsoleApp.isValidCommand( inputCommand.command ) ){
-                        ConsoleApp.trigger(inputCommand.command, inputCommand.parameters)
-                    } else {
-                        ConsoleApp.write( "The command is invalid. Write 'listCommands' for show a list of commands." )
-                    }
-
-                    if( input == "quit" ){
+                    if( input in ["quit", "exit", "leave", "end"] ){
                         ConsoleApp.trigger("quit", [:], {
                             input = false
                             ConsoleApp.write( "bye.")
                         })
+                        return;
+                    }
+
+                    if( ConsoleApp.isValidCommand( inputCommand.command ) ){
+                        ConsoleApp.trigger(inputCommand.command, inputCommand.parameters)
+                    } else {
+                        ConsoleApp.write( "The command is invalid. Write 'listCommands' for show a list of commands." )
                     }
                 }
             }catch (Exception e){

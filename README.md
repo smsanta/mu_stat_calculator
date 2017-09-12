@@ -1,6 +1,9 @@
 <h1>Get it</h1>
-For download the application just get inside
+For download the application just get inside /releases find the last version then download the "msc.zip"
 
+unzip it then get into bin/ folder and execute the mu_stat_calculator.bat
+
+Enjoy.
 
 <h1>Usage</h1>
 
